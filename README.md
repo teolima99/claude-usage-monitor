@@ -8,6 +8,12 @@ A minimal Chrome extension that tracks your Claude.ai usage limits at a glance �
 
 ---
 
+## Screenshots
+
+![Widget closed](screenshots/widget-closed.png)
+![Widget open](screenshots/widget-open.png)
+![Popup](screenshots/popup.png)
+
 ## Features
 
 - **Badge on the toolbar icon** — shows remaining % at a glance, color-coded green → amber → orange → red
