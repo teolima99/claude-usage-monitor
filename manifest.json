@@ -29,6 +29,11 @@
       "matches": ["https://claude.ai/*"],
       "js": ["widget.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://claude.ai/settings/usage*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
   ]
 }

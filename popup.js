@@ -10,6 +10,14 @@ const SVG_MARGIN_BOTTOM = 8;  // gap between arc and the rows below (px)
 // ────────────────────────────────────────────────────────────────────
 
 
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function describeArc(cx, cy, r, startDeg, endDeg) {
   const rad = a => (a - 90) * Math.PI / 180;
   const p = a => [cx + r * Math.cos(rad(a)), cy + r * Math.sin(rad(a))];
@@ -50,9 +58,9 @@ function renderData(data) {
   }
 
   const sPct   = data.session.pct;
-  const sReset = data.session.resetLabel || '—';
+  const sReset = esc(data.session.resetLabel || '—');
   const wPct   = data.weekly ? data.weekly.pct        : null;
-  const wReset = data.weekly ? data.weekly.resetLabel : null;
+  const wReset = data.weekly && data.weekly.resetLabel ? esc(data.weekly.resetLabel) : null;
   const rem    = 100 - sPct;
   const color  = getColor(sPct);
 
@@ -117,12 +125,12 @@ function renderData(data) {
         open settings ↗
       </a>
       <button id="show-widget-btn" style="font-size:10px;color:#504e49;font-family:'DM Sans',sans-serif;background:none;border:none;cursor:pointer;padding:0;border-bottom:0.5px solid #2a2925;">show widget</button>
-      </a>
     </div>
   `;
 }
 
 chrome.runtime.sendMessage({ type: 'GET_DATA' }, res => {
+  void chrome.runtime.lastError;
   if (res) renderData(res.data);
 });
 
@@ -130,11 +138,12 @@ document.getElementById('refresh-btn').addEventListener('click', () => {
   const btn = document.getElementById('refresh-btn');
   btn.textContent = '…';
   btn.disabled = true;
-  chrome.runtime.sendMessage({ type: 'REFRESH_NOW' });
+  chrome.runtime.sendMessage({ type: 'REFRESH_NOW' }, () => { void chrome.runtime.lastError; });
 
   let attempts = 0;
   const poll = setInterval(() => {
     chrome.runtime.sendMessage({ type: 'GET_DATA' }, res => {
+      void chrome.runtime.lastError;
       if (res) {
         const fresh = res.data && res.data.timestamp > (Date.now() - 15000);
         if (fresh || attempts > 12) {
@@ -154,9 +163,10 @@ document.addEventListener('click', e => {
   if (e.target && e.target.id === 'show-widget-btn') {
     chrome.storage.local.set({ claude_widget_visible: true });
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      if (tabs[0]) {
+      const tab = tabs[0];
+      if (tab && tab.url && tab.url.startsWith('https://claude.ai/')) {
         chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
+          target: { tabId: tab.id },
           func: () => {
             const w = document.getElementById('claude-usage-widget');
             if (w) w.style.display = '';

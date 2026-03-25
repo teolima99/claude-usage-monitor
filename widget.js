@@ -5,8 +5,8 @@ const STORAGE_KEY = 'claude_usage_data';
 const VIS_KEY     = 'claude_widget_visible';
 
 // ── Don't inject on the settings page itself ──────────────────
-if (location.pathname.startsWith('/settings')) {
-  // nothing
+if (location.pathname.startsWith('/settings') || document.getElementById('claude-usage-widget')) {
+  // nothing — settings page or already injected
 } else {
 
 // ── State ─────────────────────────────────────────────────────
@@ -23,7 +23,15 @@ function getColor(pct) {
 }
 
 function safeSend(msg) {
-  try { chrome.runtime.sendMessage(msg); } catch (_) {}
+  try { chrome.runtime.sendMessage(msg, () => { void chrome.runtime.lastError; }); } catch (_) {}
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 // ── Build DOM ─────────────────────────────────────────────────
@@ -125,8 +133,8 @@ function renderPill() {
 
 function row(label, value, small) {
   return `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-top:0.5px solid #1e1d1b;">
-    <span style="font-size:${small?'10px':'11px'};color:${small?'#3a3835':'#504e49'};font-family:'DM Sans',sans-serif;">${label}</span>
-    <span style="font-size:${small?'10px':'12px'};color:${small?'#504e49':'#e8e6e0'};">${value}</span>
+    <span style="font-size:${small?'10px':'11px'};color:${small?'#3a3835':'#504e49'};font-family:'DM Sans',sans-serif;">${esc(label)}</span>
+    <span style="font-size:${small?'10px':'12px'};color:${small?'#504e49':'#e8e6e0'};">${esc(String(value))}</span>
   </div>`;
 }
 

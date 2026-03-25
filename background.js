@@ -71,7 +71,7 @@ async function fetchOrgId() {
       const list = Array.isArray(json) ? json : (json.organizations || json.data || []);
       if (list.length > 0) {
         const id = list[0].uuid || list[0].id;
-        if (id) { console.log('[claude-usage] orgId from /organizations:', id); return id; }
+        if (id) { return id; }
       }
     }
   } catch (e) { console.warn('[claude-usage] /organizations failed', e); }
@@ -83,7 +83,6 @@ async function fetchOrgId() {
     });
     if (res.ok) {
       const json = await res.json();
-      console.log('[claude-usage] session keys:', Object.keys(json));
       // Try common paths
       const candidates = [
         json?.account?.memberships?.[0]?.organization?.uuid,
@@ -94,9 +93,8 @@ async function fetchOrgId() {
         json?.account?.organization_id,
       ];
       for (const c of candidates) {
-        if (c) { console.log('[claude-usage] orgId from session:', c); return c; }
+        if (c) { return c; }
       }
-      console.log('[claude-usage] session full response:', JSON.stringify(json).slice(0, 500));
     }
   } catch (e) { console.warn('[claude-usage] /auth/session failed', e); }
 
@@ -129,7 +127,6 @@ async function fetchUsage() {
     }
 
     const json = await res.json();
-    console.log('[claude-usage] usage response:', json);
 
     const fiveHour = json.five_hour || {};
     const sevenDay = json.seven_day  || {};
@@ -150,6 +147,7 @@ async function fetchUsage() {
     };
 
     await saveData(data);
+    chrome.storage.local.remove(STORAGE_KEY + '_error');
 
   } catch (e) {
     console.error('[claude-usage] fetchUsage error', e);
