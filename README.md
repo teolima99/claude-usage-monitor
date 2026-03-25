@@ -8,6 +8,10 @@ A minimal Chrome extension that tracks your Claude.ai usage limits at a glance â
 
 ---
 
+Built by [Teodoro Lima](https://github.com/teolima99)
+
+---
+
 ## Screenshots
 
 ### Floating widget
