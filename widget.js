@@ -220,9 +220,19 @@ let wasStreaming = false;
 let refreshDebounce = null;
 
 function isStreaming() {
-  // The stop button has aria-label containing "Stop" in various languages
+  // Primary: data-testid is language-independent and the most reliable signal
+  if (document.querySelector('button[data-testid*="stop"]')) return true;
+  // Fallback: aria-label in major UI languages
   return !!document.querySelector(
-    'button[aria-label*="Stop"], button[data-testid*="stop"], button[aria-label*="stop"]'
+    'button[aria-label*="Stop"],' +       // English (capital)
+    'button[aria-label*="stop"],' +       // English (lowercase)
+    'button[aria-label*="Detener"],' +    // Spanish
+    'button[aria-label*="Arr\u00EAter"],' + // French (Arrêter)
+    'button[aria-label*="Stopp"],' +      // German / Swedish / Norwegian
+    'button[aria-label*="\u505C\u6B62"],' + // Chinese (停止) + Japanese (停止する contains 停止)
+    'button[aria-label*="\uBA48\uCD94\uAE30"],' + // Korean (멈추기)
+    'button[aria-label*="Interrompi"],' + // Italian
+    'button[aria-label*="Parar"]'         // Portuguese / Spanish (alt)
   );
 }
 
