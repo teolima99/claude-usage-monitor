@@ -2,13 +2,10 @@
 
 A minimal Chrome extension that tracks your Claude.ai usage limits at a glance — session, weekly, and reset times — without ever leaving the page.
 
+![Version](https://img.shields.io/badge/version-1.4-brightgreen)
 ![Badge showing 19% remaining](https://img.shields.io/badge/status-active-3d8f5e)
 ![Manifest V3](https://img.shields.io/badge/manifest-v3-blue)
 ![License MIT](https://img.shields.io/badge/license-MIT-gray)
-
----
-
-Built by [Teodoro Lima](https://github.com/teolima99)
 
 ---
 
@@ -101,8 +98,14 @@ The badge updates every 5 minutes automatically and immediately when a prompt fi
 - Only communicates with `claude.ai` (which you're already logged into)
 - Open source — read every line
 
+See [PRIVACY.md](PRIVACY.md) for the full policy.
+
 ---
 
 ## License
 
 MIT
+
+---
+
+Built by [Teodoro Lima](https://github.com/teolima99)
