@@ -2,7 +2,10 @@ const STORAGE_KEY = 'claude_usage_data';
 const ALARM_NAME  = 'claude_usage_refresh';
 const REFRESH_MIN = 5;
 
-let orgId = null;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+let orgId   = null;
+let fetching = false;
 
 function badgeColor(pct) {
   if (pct < 50) return '#3d8f5e';
@@ -42,7 +45,9 @@ async function loadData() {
 
 function formatResetLabel(isoString) {
   if (!isoString) return null;
-  const diffMs = new Date(isoString) - Date.now();
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return null;
+  const diffMs = d - Date.now();
   if (diffMs <= 0) return 'Resetting…';
   const m = Math.floor(diffMs / 60000);
   const h = Math.floor(m / 60);
@@ -51,7 +56,9 @@ function formatResetLabel(isoString) {
 
 function formatWeeklyResetLabel(isoString) {
   if (!isoString) return null;
-  return 'Resets ' + new Date(isoString).toLocaleDateString('en-US', {
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return null;
+  return 'Resets ' + d.toLocaleString('en-US', {
     weekday: 'short', hour: 'numeric', minute: '2-digit'
   });
 }
@@ -71,7 +78,7 @@ async function fetchOrgId() {
       const list = Array.isArray(json) ? json : (json.organizations || json.data || []);
       if (list.length > 0) {
         const id = list[0].uuid || list[0].id;
-        if (id) { return id; }
+        if (id && UUID_RE.test(String(id))) { return id; }
       }
     }
   } catch (e) { console.warn('[claude-usage] /organizations failed', e); }
@@ -93,7 +100,7 @@ async function fetchOrgId() {
         json?.account?.organization_id,
       ];
       for (const c of candidates) {
-        if (c) { return c; }
+        if (c && UUID_RE.test(String(c))) { return c; }
       }
     }
   } catch (e) { console.warn('[claude-usage] /auth/session failed', e); }
@@ -104,6 +111,8 @@ async function fetchOrgId() {
 // ── Fetch usage ────────────────────────────────────────────────
 
 async function fetchUsage() {
+  if (fetching) return;
+  fetching = true;
   try {
     if (!orgId) orgId = await fetchOrgId();
     if (!orgId) {
@@ -133,12 +142,12 @@ async function fetchUsage() {
 
     const data = {
       session: {
-        pct:        Math.round(fiveHour.utilization ?? 0),
+        pct:        Math.min(100, Math.max(0, Math.round(fiveHour.utilization ?? 0))),
         resetLabel: formatResetLabel(fiveHour.resets_at),
         resetTs:    fiveHour.resets_at ? new Date(fiveHour.resets_at).getTime() : null
       },
       weekly: {
-        pct:        Math.round(sevenDay.utilization ?? 0),
+        pct:        Math.min(100, Math.max(0, Math.round(sevenDay.utilization ?? 0))),
         resetLabel: formatWeeklyResetLabel(sevenDay.resets_at),
         resetTs:    sevenDay.resets_at ? new Date(sevenDay.resets_at).getTime() : null
       },
@@ -151,6 +160,8 @@ async function fetchUsage() {
 
   } catch (e) {
     console.error('[claude-usage] fetchUsage error', e);
+  } finally {
+    fetching = false;
   }
 }
 
@@ -174,10 +185,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
 // ── Alarm ──────────────────────────────────────────────────────
 
-chrome.alarms.create(ALARM_NAME, {
-  delayInMinutes: REFRESH_MIN,
-  periodInMinutes: REFRESH_MIN
-});
 chrome.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === ALARM_NAME) fetchUsage();
 });
@@ -185,11 +192,16 @@ chrome.alarms.onAlarm.addListener(alarm => {
 // ── Startup ────────────────────────────────────────────────────
 
 chrome.runtime.onStartup.addListener(async () => {
+  // Recreate alarm only if it was somehow lost (periodic alarms survive restarts)
+  chrome.alarms.get(ALARM_NAME, a => {
+    if (!a) chrome.alarms.create(ALARM_NAME, { delayInMinutes: REFRESH_MIN, periodInMinutes: REFRESH_MIN });
+  });
   updateBadge(await loadData());
   fetchUsage();
 });
 
 chrome.runtime.onInstalled.addListener(async () => {
+  chrome.alarms.create(ALARM_NAME, { delayInMinutes: REFRESH_MIN, periodInMinutes: REFRESH_MIN });
   updateBadge(await loadData());
   fetchUsage();
 });

@@ -163,15 +163,14 @@ document.addEventListener('click', e => {
   if (e.target && e.target.id === 'show-widget-btn') {
     chrome.storage.local.set({ claude_widget_visible: true });
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      const tab = tabs[0];
-      if (tab && tab.url && tab.url.startsWith('https://claude.ai/')) {
+      if (tabs[0]) {
         chrome.scripting.executeScript({
-          target: { tabId: tab.id },
+          target: { tabId: tabs[0].id },
           func: () => {
             const w = document.getElementById('claude-usage-widget');
             if (w) w.style.display = '';
           }
-        });
+        }).catch(() => {}); // silently ignored on non-claude.ai tabs (blocked by host_permissions)
       }
     });
     e.target.textContent = 'shown ✓';

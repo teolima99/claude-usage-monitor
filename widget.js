@@ -217,6 +217,7 @@ pill.addEventListener('click', e => {
 // We watch for it to disappear → response complete → trigger refresh.
 
 let wasStreaming = false;
+let refreshDebounce = null;
 
 function isStreaming() {
   // The stop button has aria-label containing "Stop" in various languages
@@ -228,8 +229,9 @@ function isStreaming() {
 const streamObserver = new MutationObserver(() => {
   const streaming = isStreaming();
   if (wasStreaming && !streaming) {
-    // Prompt just finished — request a background refresh
-    safeSend({ type: 'REFRESH_NOW' });
+    // Prompt just finished — debounce to avoid multiple rapid triggers during DOM settle
+    clearTimeout(refreshDebounce);
+    refreshDebounce = setTimeout(() => safeSend({ type: 'REFRESH_NOW' }), 1500);
   }
   wasStreaming = streaming;
 });

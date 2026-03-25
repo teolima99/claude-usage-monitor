@@ -8,7 +8,7 @@ function isOnUsagePage() {
 function safeSend(data) {
   if (!isOnUsagePage()) return;
   try {
-    chrome.runtime.sendMessage({ type: 'USAGE_DATA', data });
+    chrome.runtime.sendMessage({ type: 'USAGE_DATA', data }, () => { void chrome.runtime.lastError; });
   } catch (_) {
     // Extension context invalidated or background not ready — silently ignore
   }
