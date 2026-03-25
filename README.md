@@ -1,4 +1,4 @@
-<h1>
+<h1 align="center">
   <img src="icons/icon128.png" width="60" alt="Claude Usage Monitor icon" style="vertical-align:-18px; margin-right:10px;"/>
   Claude Usage Monitor
 </h1>
