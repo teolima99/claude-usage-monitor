@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Usage</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 280px;
+    font-family: 'DM Mono', 'Courier New', monospace;
+    background: #0d0d0f;
+    color: #e8e6e0;
+    padding: 0;
+    min-height: 200px;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    border-bottom: 0.5px solid #1e1d1b;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #504e49;
+    letter-spacing: 0.08em;
+    font-family: 'DM Sans', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #cf6a3c;
+  }
+
+  .refresh-btn {
+    background: none;
+    border: 0.5px solid #2a2925;
+    border-radius: 6px;
+    color: #504e49;
+    font-size: 11px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .refresh-btn:hover { border-color: #cf6a3c; color: #e8e6e0; }
+
+  .main {
+    padding: 16px 16px 0;
+  }
+
+  .arc-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    position: relative;
+    height: 110px;
+  }
+
+  .arc-center-text {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+
+  .big-num {
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+
+  .big-label {
+    font-size: 10px;
+    color: #504e49;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 0.5px solid #1e1d1b;
+    font-size: 12px;
+  }
+
+  .row:last-of-type { border-bottom: none; }
+
+  .row-label { color: #504e49; font-family: 'DM Sans', sans-serif; }
+  .row-val   { color: #e8e6e0; font-weight: 400; }
+
+  .bottom-bar {
+    padding: 10px 16px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .last-upd {
+    font-size: 10px;
+    color: #3a3835;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .open-link {
+    font-size: 10px;
+    color: #504e49;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    border-bottom: 0.5px solid #2a2925;
+  }
+
+  .open-link:hover { color: #cf6a3c; border-color: #cf6a3c; }
+
+  .no-data {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    color: #504e49;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .no-data strong { color: #888; display: block; margin-bottom: 6px; font-size: 13px; }
+
+  svg.arc { overflow: visible; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand"><div class="dot"></div>Claude Usage</div>
+  <button class="refresh-btn" id="refresh-btn">↻ Refresh</button>
+</div>
+
+<div id="content">
+  <div class="no-data">
+    <strong>Nessun dato ancora</strong>
+    Clicca "Aggiorna" per leggere la pagina impostazioni
+  </div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
