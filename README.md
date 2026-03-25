@@ -1,7 +1,4 @@
-<h1 align="center">
-  <img src="icons/icon128.png" width="60" alt="Claude Usage Monitor icon" style="vertical-align:-18px; margin-right:10px;"/>
-  Claude Usage Monitor
-</h1>
+# Claude Usage Monitor <img src="icons/icon128.png" width="60" alt="Claude Usage Monitor icon" style="vertical-align:middle;"/>
 
 A minimal Chrome extension that tracks your Claude.ai usage limits at a glance — session, weekly, and reset times — without ever leaving the page.
 
