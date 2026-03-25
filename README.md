@@ -10,9 +10,23 @@ A minimal Chrome extension that tracks your Claude.ai usage limits at a glance �
 
 ## Screenshots
 
-![Widget closed](screenshots/widget-closed.png)
-![Widget open](screenshots/widget-open.png)
-![Popup](screenshots/popup.png)
+### Floating widget
+
+<div align="center">
+  <img src="screenshots/widget-closed.png" width="200" alt="Widget closed — pill showing remaining %"/>
+  &nbsp;&nbsp;&nbsp;
+  <img src="screenshots/widget-open.png" width="200" alt="Widget open — session and weekly details"/>
+</div>
+
+A draggable pill that lives on every claude.ai page. Click to expand session and weekly limits inline. Hide it with × and restore from the popup.
+
+### Popup
+
+<div align="center">
+  <img src="screenshots/popup.png" width="320" alt="Popup with arc visualization"/>
+</div>
+
+Click the toolbar icon for the full view — arc gauge, session used, reset countdown, and weekly limits.
 
 ## Features
 
