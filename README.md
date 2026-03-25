@@ -1,5 +1,5 @@
 <h1>
-  <img src="icons/icon128.png" width="48" alt="Claude Usage Monitor icon" style="vertical-align:middle; margin-right:10px;"/>
+  <img src="icons/icon128.png" width="60" alt="Claude Usage Monitor icon" style="vertical-align:-18px; margin-right:10px;"/>
   Claude Usage Monitor
 </h1>
 
