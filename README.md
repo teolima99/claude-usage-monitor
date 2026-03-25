@@ -49,6 +49,14 @@ GET https://claude.ai/api/organizations/{orgId}/usage
 
 Returns `five_hour.utilization`, `seven_day.utilization`, and `resets_at` timestamps directly — exact numbers, no estimation.
 
+```json
+{
+  "five_hour":  { "utilization": 37.0, "resets_at": "2026-03-25T05:00:00Z" },
+  "seven_day":  { "utilization": 12.0, "resets_at": "2026-03-31T14:00:00Z" },
+  "extra_usage": { "is_enabled": true, "utilization": 9.0 }
+}
+```
+
 The org ID is resolved automatically from `https://claude.ai/api/organizations` on first load.
 
 ---
@@ -57,7 +65,7 @@ The org ID is resolved automatically from `https://claude.ai/api/organizations` 
 
 1. Clone or download this repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-usage-monitor.git
+git clone https://github.com/teolima99/claude-usage-monitor.git
 ```
 
 2. Open Chrome and go to `chrome://extensions/`
