@@ -98,13 +98,13 @@ card.style.cssText = `
 host.appendChild(card);
 host.appendChild(pill);
 
-// Toggle expanded
-pill.addEventListener('click', () => {
-  if (didDrag) return;
+// Toggle expanded (capture phase so we can stop propagation on drag)
+pill.addEventListener('click', e => {
+  if (didDrag) { didDrag = false; e.stopPropagation(); return; }
   expanded = !expanded;
   card.style.display = expanded ? 'block' : 'none';
   renderCard();
-});
+}, true);
 
 // ── Restore visibility preference ─────────────────────────────
 chrome.storage.local.get(VIS_KEY, res => {
@@ -206,11 +206,6 @@ document.addEventListener('mouseup', () => {
   dragging = false;
   // didDrag stays true until next mousedown — used to suppress click
 });
-
-// Suppress click if we just dragged
-pill.addEventListener('click', e => {
-  if (didDrag) { didDrag = false; e.stopPropagation(); }
-}, true);
 
 // ── Auto-refresh on prompt completion ────────────────────────
 // Claude renders a stop-streaming button while generating.

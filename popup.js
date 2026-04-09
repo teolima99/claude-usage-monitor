@@ -134,20 +134,22 @@ chrome.runtime.sendMessage({ type: 'GET_DATA' }, res => {
   if (res) renderData(res.data);
 });
 
+let refreshPoll = null;
 document.getElementById('refresh-btn').addEventListener('click', () => {
   const btn = document.getElementById('refresh-btn');
   btn.textContent = '…';
   btn.disabled = true;
   chrome.runtime.sendMessage({ type: 'REFRESH_NOW' }, () => { void chrome.runtime.lastError; });
 
+  clearInterval(refreshPoll);
   let attempts = 0;
-  const poll = setInterval(() => {
+  refreshPoll = setInterval(() => {
     chrome.runtime.sendMessage({ type: 'GET_DATA' }, res => {
       void chrome.runtime.lastError;
       if (res) {
         const fresh = res.data && res.data.timestamp > (Date.now() - 15000);
         if (fresh || attempts > 12) {
-          clearInterval(poll);
+          clearInterval(refreshPoll);
           btn.textContent = '↻ Refresh';
           btn.disabled = false;
           renderData(res.data);
